@@ -1,0 +1,431 @@
+/**
+ * un programme qui permet de corriger l’indentation d’un algorithme écrit
+ * en pseudocode se trouvant dans un fichier texte. De plus, le programme 
+ * permet de formater, soit en majuscules, soit en minuscules, tous les mots
+ * réservés du langage pseudocode.
+ *
+ * @author Vahid Foruzanmehr
+ * @code permanant FORV26018703
+ * @version automn 2022
+ */
+public class IndenteurPseudocode {
+    
+    // ------------
+    // METHODES
+    // ------------
+    /**
+     * Cette methode affiche une nouvelle chaine de caracteres qui represente
+     * le fonction de ce programme.
+     *
+     * @return une chaine de caracteres pour presentation du pseudocode.
+     */
+    public static void presentation(){
+        String MSG_PRESENTATION =
+            "Ce programme permet de corriger l'indentation d'un algorithme " 
+            + "ecrit en pseudocode.\n\n";
+        System.out.print(MSG_PRESENTATION);
+
+    }
+    
+    /**
+     * Cette methode marque une pause en demandant a l'utilisateur
+     * d'appuyer sur la touche [ENTREE] pour continuer.
+     */
+    public static void pause(){
+        String MSG_TAP_ENTREE = 
+            "\nTapez <ENTREE> pour continuer...";
+        System.out.print(MSG_TAP_ENTREE);
+        Clavier.lireFinLigne();
+    }
+
+    /**
+     * Cette methode retourne une nouvelle chaine de caracteres qui represente
+     * le pseudocode donne en parametre, auquel on a enleve tous les caracteres
+     * blancs au debut de chaque ligne, et tous les caracteres blancs superflus
+     * a la fin de chaque ligne (en conservant cependant le caractere '\n' qui
+     * marque la fin d'une ligne).
+     *
+     * @param pseudocode le pseudocode a traiter.
+     * @return une nouvelle chaine representant le pseudocode donne en parametre,
+     * auquel on a enleve tous les caracteres blancs au debut et a la fin
+     * de chaque ligne (en conservant le caractere '\n' a la fin de chaque
+     * ligne).
+     */
+    public static String trimer (String pseudocode) {
+        String sTrim = ""; //pseudocode a retourner
+        String sTmp;
+        int debut = 0; //indice du debut de la ligne courante
+        int fin; //indice de la fin de la ligne courante
+        //parcourir les lignes, et enlever les caracteres blancs avant et après
+        //chaque ligne sauf le \n a la fin de la ligne.
+        pseudocode = pseudocode.trim() + "\n";
+        fin = pseudocode.indexOf("\n", debut);
+        while (fin != -1) {
+            //extraire la ligne courante et enlever tous les caracteres blancs
+            //en debut et fin de ligne
+            sTmp = pseudocode.substring(debut, fin).trim();
+            //concatener la ligne courante a la chaine a retourner, en ajoutant
+            //le saut de ligne a la fin.
+            sTrim = sTrim + sTmp + "\n";
+            //ajuster le debut de la ligne courante suivante
+            debut = fin + 1;
+            //trouver la fin de la ligne courante suivante
+            fin = pseudocode.indexOf("\n", debut);
+        }
+        return sTrim;
+    }
+    
+    /**
+     * Cette methode retourne une nouvelle chaine de caracteres avec les mots 
+     * reserver qui sont debut de la ligne en majuscule ou en minuscule.
+     *
+     * @param pseudocode le pseudocode a traiter.
+     * @param majMin le choix de minuscule ou majuscule par utilisateur
+     * @return des mots reserver qui sont debut de la ligne en majuscule 
+     * ou en minuscule.
+     */ 
+    public static String motCasPropre(String sTmp, String majMin){
+        // Si les mots reserve sont debut de la ligne, il le changer en minuscule,
+        // ou majuscule
+        if (sTmp.toLowerCase().equals("si")  
+            || sTmp.toLowerCase().equals("fin si")
+            || sTmp.toLowerCase().equals("fin")   
+            || sTmp.toLowerCase().equals("sinon")
+            || sTmp.toLowerCase().equals("debut")
+            || sTmp.toLowerCase().equals("saisir")
+            || sTmp.toLowerCase().equals("faire")  
+            || sTmp.toLowerCase().equals("ecrire")
+            || sTmp.toLowerCase().equals("afficher") 
+            || sTmp.toLowerCase().equals("lire")  
+            || sTmp.toLowerCase().equals("fin tant que") 
+            || sTmp.toLowerCase().equals("tant que")){
+                if(majMin.equals("M")){
+                    sTmp = sTmp.toUpperCase();
+                }else{
+                    sTmp = sTmp.toLowerCase();
+                }
+            }
+        return sTmp;
+    }
+    
+    /**
+     * Cette methode retourne une nouvelle chaine de caracteres avec les mots 
+     * reserver qui sont debut de la ligne en majuscule ou en minuscule.
+     *
+     * @param pseudocode le pseudocode a traiter.
+     * @param majMin le choix de minuscule ou majuscule par utilisateur
+     * @return une nouvelle chaine representant le pseudocode avec les mots 
+     * reserver qui sont debut de la ligne en majuscule ou en minuscule.
+     */
+    public static String faireCasApproprie (String pseudocode , String majMin ){
+        String sNouvelleLigne = "";
+        String ligne;
+        int debut = 0; //indice du debut de la ligne courante
+        int fin = pseudocode.indexOf("\n", debut); //indice de la fin de la ligne courante
+        // mettre chaque ligne dans String de ligne, ensuite lire et ajouter chaque 
+        // caractére de ligne dans sTmp.
+        while(fin != -1) {
+            // Mettre chaque ligne dans String de ligne
+            ligne = pseudocode.substring(debut, fin);
+            String sTmp  = "";
+            // Si sTmp devenu egale aux mots réserve, on fait minuscule ou majuscule
+             // le sTmp et on l'ajoute aux nouvelle String qui s'appele sNouvelleLigne
+            if (!(ligne.toLowerCase().indexOf("/") == 0)) {
+                for (int pos = 0; pos < ligne.length(); pos++){
+                    sTmp = sTmp + ligne.charAt(pos);
+                    sTmp = motCasPropre(sTmp, majMin);
+                }
+            } else {
+                sTmp =ligne;
+            }
+            //ajuster le debut de la ligne courante suivante
+            debut = fin + 1;
+            //trouver la fin de la ligne courante suivante
+            fin = pseudocode.indexOf("\n", debut);
+            // Ajouter sTmp (majuscule ou minuscule) à sNouvelleLigne
+            sNouvelleLigne = sNouvelleLigne + sTmp + "\n";
+        }
+        return sNouvelleLigne;
+    }
+    
+    /**
+     * Cette methode retourne des espace pour affiche des 
+     * indentations qu'on a besoin debut de la ligne.
+     *
+     * @param count, les nombres de repetition d'espace d'indentation.
+     * @return une nouvelle chaine avec une espace nécessaire.
+     */
+    public static String getSpace(int count){
+        String space ="";
+        for (int i = 0 ; i < count; i++){
+            space = space + "   ";
+        }
+        return space;
+    }
+
+    /**
+     * Cette methode retourne une nouvelle chaine de caracteres avec les mots 
+     * reserver en minuscule ou en majuscule qui ne sont pas dans les 
+     * commentaires et qui sont debut de la ligne.
+     *
+     * @param pseudocode le pseudocode a traiter.
+     * @return une nouvelle chaine representant le pseudocode avec les mots 
+     * resever, en minuscule ou en majuscule.
+     */
+    public static String ident (String pseudocode){
+        int count = 0;
+        int countTantQue = 0;
+        int fin; 
+        int debut = 0;
+        String sIndDebut = "";
+        String sTmp2;
+        fin = pseudocode.indexOf("\n", debut);
+        //parcourir les lignes.
+        while(fin != -1) {
+
+            sTmp2 = pseudocode.substring(debut, fin);
+            // si il n'y a pas des commentaire et s'il y aurait des mots reserve 
+            // comme : debut, sinon, faire et tant que (debut la ligne), on ajoute 
+            // un niveau d'indentation.
+            // s'il y aurait des mots reserve comme : fin, fin si et fin tant que,
+            // on diminue l'indentation avant ce mot.
+            if (sTmp2.length() != 0 && sTmp2.charAt(0) != '/') {
+                if (sTmp2.toUpperCase().indexOf("FIN SI")==0 ) {
+                    count--;
+                    sIndDebut = sIndDebut +getSpace(count) +sTmp2 + "\n";
+                } else if (sTmp2.toUpperCase().indexOf("SINON") == 0){
+                    count--;
+                    sIndDebut = sIndDebut +getSpace(count) +sTmp2 + "\n";
+                    count++;
+                } else if (sTmp2.toUpperCase().indexOf("SI") == 0
+                          || sTmp2.toUpperCase().indexOf("DEBUT")==0){
+                    sIndDebut = sIndDebut +getSpace(count) +sTmp2 + "\n";
+                    count++;
+
+                } else if (sTmp2.toUpperCase().indexOf("FAIRE")==0) {
+                    sIndDebut = sIndDebut +getSpace(count) +sTmp2 + "\n";
+                    count++;
+                    countTantQue++;
+                } else if (sTmp2.toUpperCase().indexOf("FIN TANT QUE") == 0 ){
+                    count--;
+                    sIndDebut = sIndDebut +getSpace(count) +sTmp2 + "\n";
+                    countTantQue--;
+                } else if (sTmp2.toUpperCase().indexOf("TANT QUE") == 0){
+                    if (countTantQue > 0){
+                        count--;
+                        sIndDebut = sIndDebut +getSpace(count) +sTmp2 + "\n";
+                        countTantQue--;
+                    } else {
+                        sIndDebut = sIndDebut +getSpace(count) +sTmp2 + "\n";
+                        count++;
+                    }
+                } else if (sTmp2.toUpperCase().indexOf("FIN") == 0){
+                    count--;
+                    sIndDebut = sIndDebut +getSpace(count) +sTmp2 + "\n";
+                } else {
+                    sIndDebut = sIndDebut +getSpace(count) +sTmp2 + "\n";
+                }
+            } else {
+                sIndDebut = sIndDebut +getSpace(count) +sTmp2 + "\n";
+            }
+            //ajuster le debut de la ligne courante suivante
+            debut = fin + 1;
+            //trouver la fin de la ligne courante suivante
+            fin = pseudocode.indexOf("\n", debut);
+        }
+        return sIndDebut;
+    }
+    
+    /**
+     * Cette methode retourne une nouvelle chaine de caracteres avec les mots 
+     * reserver en minuscule ou en majuscule qui ne sont pas dans les 
+     * commentaires et qui ne sont pas debut de la ligne.
+     *
+     * @param pseudocode le pseudocode a traiter.
+     * @param pattern, le mots qu'on veut changer en majuscule ou minuscule.
+     * @param majMin, choisi minuscule ou majuscule.
+     * @return une nouvelle chaine representant le pseudocode avec les mots 
+     * resever, en minuscule ou en majuscule.
+     */
+    public static String faireCasApproprieFinLigne (String pseudocode, String modele, String majMin){
+        String sSpace = ""; 
+        String sTmp;
+        int debut = 0; 
+        int fin; 
+        fin = pseudocode.indexOf("\n", debut);
+        //parcourir les lignes, ensuite si la ligne contain la modele, il le met 
+        // en minuscule ou en majuscule
+        while (fin != -1) {
+            //parcourir les lignes dans le sTmp
+            sTmp = pseudocode.substring(debut, fin);
+            if (sTmp.toLowerCase().contains(modele) == true && sTmp.charAt(0) != '/' ){   
+                int tpm2 = sTmp.toLowerCase().indexOf(modele);
+                
+                if (majMin.equals("M")){
+                    sTmp = sTmp.substring(0,tpm2) + modele.toUpperCase() 
+                            + sTmp.substring(tpm2+ modele.length(),sTmp.length());
+                } else {
+                    sTmp = sTmp.substring(0,tpm2) + modele.toLowerCase() 
+                            + sTmp.substring(tpm2+ modele.length(),sTmp.length());
+                }
+            }
+            // mettre tout les ajoustement dans sSpace
+            sSpace = sSpace + sTmp + "\n";
+            //ajuster le debut de la ligne courante suivante
+            debut = fin + 1;
+            //trouver la fin de la ligne courante suivante
+            fin = pseudocode.indexOf("\n", debut);
+        }
+        return sSpace;
+    }
+    
+    /**
+     * Cette methode saisit et valide le choix de l'utilisateur entree 
+     * Indenter pseudocode(1) et Quitter(2).
+     *
+     * @return le choix valide de l'utilisateur, entre Indenter pseudocode(1) 
+     * et Quitter(2).
+     */
+    public static String validerMenu(){
+        String MENU_PRINCIPAL = "\n----\n"
+            + "MENU\n"
+            + "----\n"
+            + "1. Indenter pseudocode\n"
+            + "2. Quitter\n\n"
+            + "Entrez votre choix : ";
+        String MSG_ERR_MENU_PRINCIPAL =
+            "\nERREUR ! Choix invalide. Recommencez...\n";
+        boolean nbErreur = false;;
+        String choixMenuPrincipal;
+        // programme lire l'address jusqu'a l'utilisateur entre 1 ou 2
+        do {
+            if (nbErreur) {
+                System.out.print(MSG_ERR_MENU_PRINCIPAL);
+            }
+            nbErreur = true;
+            System.out.print(MENU_PRINCIPAL);
+            choixMenuPrincipal = Clavier.lireString();
+        } while (!(choixMenuPrincipal.equals("1") || choixMenuPrincipal.equals("2")));
+        return choixMenuPrincipal;
+    }
+    
+    /**
+     * Cette methode saisit et valide l'adresse du chemin de l'utilisateur.
+     *
+     * @return le chemin validé rentrer par l'utilisateur.
+     */
+    public static String validerChemin() {
+        String MSG_ENTRER_CHEMIN = 
+            "Entrez le chemin du fichier de pseudocode : ";
+        String MSG_ERR_ENTRER_CHEMIN = 
+            "\nERREUR ! Chemin de fichier invalide. Recommencez...\n";
+        boolean nbErreur = false;
+        String lireChemin;
+        String chemin;
+        // programme lire l'address jusqu'a une addresse qui contiens psuedocode.
+        do{
+            if (nbErreur) {
+                System.out.print(MSG_ERR_ENTRER_CHEMIN);
+            }
+            nbErreur = true;
+            System.out.print(MSG_ENTRER_CHEMIN);
+            lireChemin = Clavier.lireString();
+            chemin = TP2Utils.lireFichierTexte(lireChemin);
+        } while (chemin == null );
+        return chemin;
+    }
+    
+    /**
+     * Cette methode saisit et valide demande de l'utilisateur etre 
+     * deux choix de minuscule ou majuscule.
+     *
+     * @return le chaine de caractére qui represente choix de minuscule 
+     * ou majuscule.
+     */
+    public static String validerMinMaj () {
+        String MSG_MIN_MAJ = 
+            "Mots reserves : en (m)inuscules ou en (M)ajuscules : ";
+        String MSG_ERR_MIN_MAJ =
+            "\nERREUR ! Entrez m ou M. Recommencez...";
+        String lireMinMaj;
+        boolean nbErreur = false;
+        // programme demande d'une string de "M" ou "m".
+        do{
+            //afficher message erreur apres premier fois
+            if (nbErreur){
+                System.out.println(MSG_ERR_MIN_MAJ);
+            }
+            nbErreur = true;
+            System.out.print(MSG_MIN_MAJ);
+            lireMinMaj = Clavier.lireString();
+        }while ( !(lireMinMaj.toLowerCase().equals("m")) );
+        return lireMinMaj;
+    }
+
+    /**
+     * Cette methode retourne une ligne de dash avant et aprés chaine de 
+     * caracteres de psaudocode.
+     *
+     * @param pseudocode le pseudocode a traiter.
+     * @return une nouvelle chaine representant le pseudocode avec une 
+     * ligne de (dash) pour separation au debut et a la fin de
+     * pseudocode.
+     */
+    public static String ajouterDash(String pseudocode) {
+        
+        String dash = "--------------------\n";
+        pseudocode = "\n" + dash + pseudocode + dash;
+        return pseudocode;
+    }
+    
+    /**
+     * Cette methode affiche une chaine de caracteres qui represente
+     * la fin normale du programme.
+     */
+    public static void finNoraml (){
+        String MSG_FIN_NORMAL = 
+            "\n\nF I N   N O R M A L E   D U   P R O G R A M M E\n";
+        System.out.print(MSG_FIN_NORMAL);
+    }
+    
+    public static void main (String[] args){
+        
+        //declarations des variables
+        String choixMenuPrincipal;  // 1. Indenter pseudocode 2. Quitter
+        String pseudocodeTrim;      
+        String majMin;              // minuscule ou majuscule
+        String pseudocodeMakeWord;
+        String pseudocodeIdenter;
+        String pseudocodeDash;      // une ligne dash avant et aprés code
+        boolean quitterChoixMenu =true;
+
+        presentation();
+        // valider la saisie du choix au menu
+        while (quitterChoixMenu) {
+
+            choixMenuPrincipal = validerMenu();
+
+            switch (choixMenuPrincipal) {
+                case "1":
+
+                    pseudocodeTrim = trimer( validerChemin() );
+                    //Mots reserves : en (m)inuscules ou en (M)ajuscules :
+                    majMin = validerMinMaj();
+
+                    pseudocodeMakeWord = faireCasApproprieFinLigne( pseudocodeTrim,"faire", majMin );
+                    pseudocodeMakeWord = faireCasApproprieFinLigne(pseudocodeMakeWord,"alors", majMin );
+                    pseudocodeMakeWord = faireCasApproprieFinLigne( pseudocodeMakeWord," si", majMin );
+                    pseudocodeIdenter = ident( faireCasApproprie(pseudocodeMakeWord, majMin) );
+                    pseudocodeDash = ajouterDash( pseudocodeIdenter );
+                    System.out.print(pseudocodeDash);
+                    pause();
+                    
+                    break;
+                case "2":
+                    quitterChoixMenu = false;
+                    break;
+            }
+        }
+        finNoraml();
+    }
+}
